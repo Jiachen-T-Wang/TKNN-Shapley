@@ -27,7 +27,6 @@ from scipy.special import beta, comb
 from random import randint
 from sklearn.cluster import KMeans
 from sklearn.metrics import f1_score, roc_auc_score, average_precision_score
-from utility_func import *
 from helper_privacy import PrivateKNN_mech, PrivateKNN_SV_RJ_mech
 import prv_accountant
 from prv_accountant.other_accountants import RDP

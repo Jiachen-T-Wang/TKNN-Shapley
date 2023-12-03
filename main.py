@@ -22,10 +22,7 @@ import pdb
 
 from helper import *
 from helper_knn import *
-from utility_func import *
 from prepare_data import *
-from if_utils import *
-import config
 import argparse
 
 parser = argparse.ArgumentParser('')
@@ -67,10 +64,6 @@ n_repeat = args.n_repeat
 
 
 assert sigma==0 or eps==0
-
-
-big_dataset = config.big_dataset
-OpenML_dataset = config.OpenML_dataset
 
 save_dir = 'result/'
 

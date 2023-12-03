@@ -29,7 +29,6 @@ from random import randint
 from sklearn.cluster import KMeans
 from sklearn.metrics import f1_score, roc_auc_score, average_precision_score
 
-from utility_func import *
 
 from helper_privacy import PrivateKNN_mech, PrivateKNN_SV_RJ_mech
 
@@ -37,14 +36,8 @@ import prv_accountant
 from prv_accountant.other_accountants import RDP
 from prv_accountant import PRVAccountant, PoissonSubsampledGaussianMechanism
 from prv_accountant.dpsgd import find_noise_multiplier
-
-import config
-
 from sklearn.metrics.pairwise import cosine_similarity
 
-
-big_dataset = config.big_dataset
-OpenML_dataset = config.OpenML_dataset
 
 save_dir = 'result/'
 

@@ -20,117 +20,8 @@ import os
 import random
 
 from helper import *
-from utility_func import *
 
-import config
-
-
-def get_ufunc_loss_acc_time(dataset, model_type, args, verbose):
-    if dataset in ['MNIST', 'FMNIST']:
-        u_func = lambda a, b, c, d: torch_general_data_to_acc_time_loss(dataset, model_type, a, b, c, d, verbose=verbose, args=args)
-    elif dataset == 'CIFAR10':
-        u_func = lambda a, b, c, d: torch_general_data_to_acc_time_loss(dataset, model_type, a, b, c, d, verbose=verbose, args=args)
-    return u_func
-
-
-def get_ufunc_loss_acc(dataset, model_type, args, verbose):
-    if dataset in ['MNIST', 'FMNIST']:
-        u_func = lambda a, b, c, d: torch_general_data_to_acc_loss(dataset, model_type, a, b, c, d, verbose=verbose, args=args)
-    elif dataset == 'CIFAR10':
-        u_func = lambda trainset, testset, idx: GENERAL_data_to_acc_loss(dataset, model_type, trainset, testset, idx, args=args)
-    elif dataset in config.OpenML_dataset:
-        u_func = lambda a, b, c, d: torch_binary_data_to_acc_loss(model_type, a, b, c, d, verbose=verbose, args=args)
-    return u_func
-
-
-def get_ufunc(dataset, model_type, batch_size, lr, verbose):
-    
-    if dataset in ['MNIST', 'FMNIST', 'Dog_vs_CatFeature']:
-        u_func = lambda a, b, c, d: torch_general_data_to_acclst(dataset, model_type, a, b, c, d, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset == 'CIFAR10':
-        u_func = lambda a, b, c, d: torch_cifar_data_to_acc(model_type, a, b, c, d, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset == 'Dog_vs_Cat':
-        u_func = lambda a, b, c, d: torch_dogcat_data_to_acc(model_type, a, b, c, d, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset in ['covertype']:
-        u_func = lambda a, b, c, d: binary_data_to_acc(model_type, a, b, c, d)
-    elif dataset in config.OpenML_dataset:
-        u_func = lambda a, b, c, d: torch_binary_data_to_acc(model_type, a, b, c, d, batch_size=batch_size, lr=lr, verbose=verbose)
-    return u_func
-
-
-def get_ufunc_new(dataset, model_type, args):
-
-    if dataset in ['MNIST', 'FMNIST', 'CIFAR10']:
-        u_func = lambda trainset, testset, idx: GENERAL_data_to_acc_loss(dataset, model_type, trainset, testset, idx, args=args)[0]
-    return u_func
-
-
-"""
-def get_ufunc(dataset, model_type, batch_size, lr, verbose):
-    if dataset in ['MNIST', 'FMNIST']:
-        u_func = lambda a, b, c, d: torch_mnist_data_to_acc(model_type, a, b, c, d, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset == 'CIFAR10':
-        u_func = lambda a, b, c, d: torch_cifar_data_to_acc(model_type, a, b, c, d, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset == 'Dog_vs_Cat':
-        u_func = lambda a, b, c, d: torch_dogcat_data_to_acc(model_type, a, b, c, d, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset == 'Dog_vs_CatFeature':
-        u_func = lambda a, b, c, d: torch_dogcatFeature_data_to_acc(model_type, a, b, c, d, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset == 'FMNIST':
-        sys.exit(1)
-    elif dataset in ['covertype']:
-        u_func = lambda a, b, c, d: binary_data_to_acc(model_type, a, b, c, d)
-    elif dataset in config.OpenML_dataset:
-        u_func = lambda a, b, c, d: torch_binary_data_to_acc(model_type, a, b, c, d, batch_size=batch_size, lr=lr, verbose=verbose)
-    return u_func
-"""
-
-
-def get_weighted_ufunc(dataset, model_type, batch_size, lr, verbose):
-    if dataset in ['MNIST', 'FMNIST']:
-        u_func = lambda a, b, c, d, w: torch_mnist_data_to_acc(model_type, a, b, c, d, weights=w, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset == 'CIFAR10':
-        u_func = lambda a, b, c, d, w: torch_cifar_data_to_acc(model_type, a, b, c, d, weights=w, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset == 'Dog_vs_Cat':
-        u_func = lambda a, b, c, d, w: torch_dogcat_data_to_acc(model_type, a, b, c, d, weights=w, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset == 'Dog_vs_CatFeature':
-        u_func = lambda a, b, c, d, w: torch_dogcatFeature_data_to_acc(model_type, a, b, c, d, weights=w, batch_size=batch_size, lr=lr, verbose=verbose)
-    elif dataset == 'FMNIST':
-        sys.exit(1)
-    elif dataset in ['covertype']:
-        u_func = lambda a, b, c, d, w: binary_data_to_acc(model_type, a, b, c, d, w=w)
-    elif dataset in config.OpenML_dataset:
-        u_func = lambda a, b, c, d, w: torch_binary_data_to_acc(model_type, a, b, c, d, weights=w, batch_size=batch_size, lr=lr, verbose=verbose)
-    return u_func
-
-
-
-def make_balance_sample_multiclass(data, target, n_data):
-
-    n_class = len(np.unique(target))
-
-    n_data_per_class = int(n_data / n_class)
-
-    selected_ind = np.array([])
-
-    for i in range(n_class):
-
-        index_class = np.where(target == i)[0]
-
-        ind = np.random.choice(index_class, size=n_data_per_class, replace=False)
-
-        selected_ind = np.concatenate([selected_ind, ind])
-
-    selected_ind = selected_ind.astype(int)
-
-    data, target = data[selected_ind], target[selected_ind]
-
-    assert n_data == len(target)
-
-    idxs=np.random.permutation(n_data)
-    data, target=data[idxs], target[idxs]
-
-    return data, target
-
+OpenML_dataset = ['fraud', 'apsfail', 'click', 'phoneme', 'wind', 'pol', 'creditcard', 'cpu', 'vehicle', '2dplanes']
 
 # If noisy_data=False => Flip Label
 # If noisy_data=True => Add Gaussian Noise
@@ -143,7 +34,7 @@ def get_processed_data(dataset, n_data, n_val, flip_ratio, minor_ratio=0.5, nois
 
     n_flip = int(n_data*flip_ratio)
 
-    if dataset in config.OpenML_dataset:
+    if dataset in OpenML_dataset:
         X, y, _, _ = get_data(dataset)
         x_val, y_val = X[:n_val], y[:n_val]
         x_train, y_train = X[n_val:], y[n_val:]
@@ -252,7 +143,7 @@ def get_processed_data_clip(dataset, n_data, n_val, flip_ratio, minor_ratio=0.5)
     print('-------')
     print('Load Dataset {}'.format(dataset))
 
-    if dataset in config.OpenML_dataset:
+    if dataset in OpenML_dataset:
 
         X, y, _, _ = get_data(dataset)
         x_train, y_train = X[:n_data], y[:n_data]
@@ -301,7 +192,7 @@ def get_processed_data_noisy(dataset, n_data, n_val, flip_ratio, minor_ratio=0.5
     print('-------')
     print('Load Dataset {}'.format(dataset))
 
-    if dataset in config.OpenML_dataset:
+    if dataset in OpenML_dataset:
         X, y, _, _ = get_data(dataset)
         x_val, y_val = X[:n_val], y[:n_val]
 
@@ -347,7 +238,7 @@ def get_processed_data_noisy(dataset, n_data, n_val, flip_ratio, minor_ratio=0.5
 
 def get_data(dataset):
 
-    if dataset in ['covertype']+config.OpenML_dataset:
+    if dataset in ['covertype']+OpenML_dataset:
         ret = get_minidata(dataset)
     elif dataset == 'MNIST':
         ret = get_mnist()
