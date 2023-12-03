@@ -20,8 +20,23 @@ If you have any questions related to the code or the paper, feel free to email *
 ## Quick Start
 To reproduce the mislabeled data detection experiments in our paper, we can simply run the following:
 ```
-python main.py --task noisy_detect --dataset 2dplanes --value_type TNN-SV --n_data 2000 --n_val 200 --flip_ratio 0.1 --tau -0.5
+python main.py --task mislabel_detect --dataset 2dplanes --value_type TNN-SV --n_data 2000 --n_val 200 --flip_ratio 0.1 --tau -0.5 --n_repeat 1
 ```
+This command will give you the AUROC score of milabeled detection task of TKNN-Shapley on 2dplanes dataset:
+```
+-------
+Load Dataset 2dplanes
+# of classes = 2
+-------
+Data Error Type: Mislabel
+-------
+tau in tnn shapley -0.5
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:00<00:00, 887.83it/s]
+Data Value Computed; Value Name: TNN-SV; Runtime: 0.228 s
+Task: mislabel_detect
+*** TNN-SV AUROC: 0.92 (0.0), eps=inf, delta=0***
+```
+
 
 Here's the naming of `value_type`:
 - KNN-SV-RJ: original KNN-Shapley [1].
@@ -30,6 +45,41 @@ Here's the naming of `value_type`:
 - KNN-SV-RJ-private-withsub: naively privatized KNN-Shapley (with subsampling), described in our Appendix B.4. 
 - TNN-SV: Threshold KNN-Shapley, described in our Section 4. 
 - TNN-SV-private: Private version of Threshold KNN-Shapley, described in our Section 5. 
+
+
+For private setting, we need to also specify the desired privacy parameter `eps`, `delta`, and subsampling rate `q`; moreover, we can run the experiment for multiple times to obtain the variance of the results. 
+The following command line gives you the result for DP-TKNN-Shapley:
+```
+python main.py --task mislabel_detect --dataset 2dplanes --value_type TNN-SV-private --n_data 2000 --n_val 200 --flip_ratio 0.1 --tau -0.5 --eps 0.1 --delta 1e-4 --n_repeat 5 --q 0.01
+```
+where the output is 
+```
+-------
+Load Dataset 2dplanes
+# of classes = 2
+-------
+Data Error Type: Mislabel
+-------
+Noise magnitude sigma=3.7952708147564307
+Noise magnitude sigma=3.7952708147564307
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:00<00:00, 687.82it/s]
+Data Value Computed; Value Name: TNN-SV-private; Runtime: 1.889 s
+Noise magnitude sigma=3.7952708147564307
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:00<00:00, 685.21it/s]
+Data Value Computed; Value Name: TNN-SV-private; Runtime: 0.293 s
+Noise magnitude sigma=3.7952708147564307
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:00<00:00, 702.68it/s]
+Data Value Computed; Value Name: TNN-SV-private; Runtime: 0.286 s
+Noise magnitude sigma=3.7952708147564307
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:00<00:00, 724.12it/s]
+Data Value Computed; Value Name: TNN-SV-private; Runtime: 0.277 s
+Noise magnitude sigma=3.7952708147564307
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:00<00:00, 712.55it/s]
+Data Value Computed; Value Name: TNN-SV-private; Runtime: 0.281 s
+Task: mislabel_detect
+*** TNN-SV-private AUROC: 0.885 (0.012), eps=0.1, delta=0.0001***
+```
+
 
 
 ## Citation
