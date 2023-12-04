@@ -1,6 +1,6 @@
 # Threshold KNN-Shapley: A Linear-Time and Privacy-Friendly Approach to Data Valuation
 
-Jiachen T. Wang, Yuqing Zhu, Yu-Xiang Wang, Ruoxi Jia, Prateek Mittal
+[Jiachen T. Wang](https://tianhaowang.netlify.app/), [Yuqing Zhu](https://jeremy43.github.io/), [Yu-Xiang Wang](https://sites.cs.ucsb.edu/~yuxiangw/), [Ruoxi Jia](https://ruoxijia.info/), [Prateek Mittal](https://www.princeton.edu/~pmittal/)
 > 
 > Data valuation aims to quantify the usefulness of individual data sources in training machine learning (ML) models, and is a critical aspect of data-centric ML research. However, data valuation faces significant yet frequently overlooked privacy challenges despite its importance. This paper studies these challenges with a focus on KNN-Shapley, one of the most practical data valuation methods nowadays. We first emphasize the inherent privacy risks of KNN-Shapley, and demonstrate the significant technical difficulties in adapting KNN-Shapley to accommodate differential privacy (DP). To overcome these challenges, we introduce TKNN-Shapley, a refined variant of KNN-Shapley that is privacy-friendly, allowing for straightforward modifications to incorporate DP guarantee (DP-TKNN-Shapley). We show that DP-TKNN-Shapley has several advantages and offers a superior privacy-utility tradeoff compared to naively privatized KNN-Shapley in discerning data quality. Moreover, even non-private TKNN-Shapley achieves comparable performance as KNN-Shapley. Overall, our findings suggest that TKNN-Shapley is a promising alternative to KNN-Shapley, particularly for real-world applications involving sensitive data.
 
@@ -15,7 +15,7 @@ Jiachen T. Wang, Yuqing Zhu, Yu-Xiang Wang, Ruoxi Jia, Prateek Mittal
 
 Official implementation of our NeurIPS 2023 Spotlight paper [Threshold KNN-Shapley: A Linear-Time and Privacy-Friendly Approach to Data Valuation](https://arxiv.org/pdf/2308.15709.pdf), where we propose a new data valuation technique that is **training-free**, has **linear runtime**, and can be **easily modified to provide provable privacy guarantee**. 
 
-If you have any questions related to the code or the paper, feel free to email **Jiachen** (tianhaowang@princeton.edu) and **Ruoxi** (ruoxijia@vt.edu). 
+If you have any questions related to the code or the paper, feel free to email **Jiachen T. Wang** (tianhaowang@princeton.edu) and **Ruoxi Jia** (ruoxijia@vt.edu). 
 
 ## Quick Start
 To reproduce the mislabeled data detection experiments in our paper, we can simply run the following:
@@ -81,6 +81,8 @@ Task: mislabel_detect
 *** TNN-SV-private AUROC: 0.885 (0.012), eps=0.1, delta=0.0001***
 ```
 
+## Data preprocessing for vision/language datasets 
+For our experiments on MNIST, CIFAR10, AGNews, and DBPedia, we use the functions in `image_language_data_process.py` for data preprocessing. 
 
 
 ## Citation
@@ -96,6 +98,9 @@ If you use this code in your research, please cite the following work:
 ```
 
 ## Reference
-[1] Jia, Ruoxi, et al. "Efficient task-specific data valuation for nearest neighbor algorithms." VLDB 2019
+[1] Jia, Ruoxi, et al. Efficient task-specific data valuation for nearest neighbor algorithms. VLDB 2019.
 
-[2] Wang, Jiachen T., and Ruoxi Jia. "A Note on" Efficient Task-Specific Data Valuation for Nearest Neighbor Algorithms"." Technical Note (2023).
+[2] Wang, Jiachen T., and Ruoxi Jia. A Note on "Efficient Task-Specific Data Valuation for Nearest Neighbor Algorithms". Technical Note 2023.
+
+## Acknowledgments
+This work was supported in part by the National Science Foundation under grants CNS-2131938, CNS-1553437, CNS-1704105, CNS-2048091, IIS-2312794, IIS-2313130, OAC-2239622, the ARL’s Army Artificial Intelligence Innovation Institute (A2I2), the Office of Naval Research Young Investigator Award, the Army Research Office Young Investigator Prize, Schmidt DataX award, Princeton E-ffiliates Award, Amazon-Virginia Tech Initiative in Efficient and Robust Machine Learning, the Commonwealth Cyber Initiative, a Google PhD Fellowship, and a Princeton's Gordon Y. S. Wu Fellowship. We are grateful to anonymous reviewers at NeurIPS for their valuable feedback. 

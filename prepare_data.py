@@ -100,6 +100,7 @@ def get_processed_data(dataset, n_data, n_val, flip_ratio, minor_ratio=0.5, nois
         x_train = x_train / train_l2_norm[:, np.newaxis]
         x_val = x_val / val_l2_norm[:, np.newaxis]
 
+    """
     elif dataset == 'cifar10':
         path ='/home/yq/neural_collapse/features/'
         train_feature = np.load(path + 'vit_cifar_train.npy')
@@ -125,7 +126,8 @@ def get_processed_data(dataset, n_data, n_val, flip_ratio, minor_ratio=0.5, nois
         test_labels = np.array(test_labels)
         x_train, y_train = make_balance_sample_multiclass(train_feature_norm, train_labels, n_data)
         x_val, y_val = make_balance_sample_multiclass(test_feature_norm, test_labels, n_val)
-
+    """
+        
     elif dataset == 'Gaussian':
 
         dim = 10        # Set the dimensionality of the Gaussian distribution

@@ -62,8 +62,9 @@ eps = args.eps
 q_test = args.q_test
 n_repeat = args.n_repeat
 
-
-assert sigma==0 or eps==0
+# *** NOTE: We can either specify a desired noise magnitude 'sigma' or a desired privacy guarantee 'eps'
+# *** but we cannot specify both
+assert sigma==0 or eps==-1
 
 save_dir = 'result/'
 
