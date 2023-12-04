@@ -22,7 +22,7 @@ To reproduce the mislabeled data detection experiments in our paper, we can simp
 ```
 python main.py --task mislabel_detect --dataset 2dplanes --value_type TNN-SV --n_data 2000 --n_val 200 --flip_ratio 0.1 --tau -0.5 --n_repeat 1
 ```
-This command will give you the AUROC score of milabeled detection task of TKNN-Shapley on 2dplanes dataset:
+This command will give you the AUROC score of milabeled detection task of (non-private) TKNN-Shapley on 2dplanes dataset:
 ```
 -------
 Load Dataset 2dplanes
@@ -37,17 +37,18 @@ Task: mislabel_detect
 *** TNN-SV AUROC: 0.92 (0.0), eps=inf, delta=0***
 ```
 
-
-Here's the naming of `value_type`:
+In the above command line, the argument `--value_type` refers to the data valuation method being used. 
+Here are the possible options: 
 - KNN-SV-RJ: original KNN-Shapley [1].
 - KNN-SV-JW: soft-label KNN-Shapley [2]. 
 - KNN-SV-RJ-private: naively privatized KNN-Shapley (without subsampling), described in our Appendix B.4. 
-- KNN-SV-RJ-private-withsub: naively privatized KNN-Shapley (with subsampling), described in our Appendix B.4. 
+- KNN-SV-RJ-private-withsub: naively privatized KNN-Shapley (with subsampling), described in our Appendix B.4. Note that this one is super 
 - TNN-SV: Threshold KNN-Shapley, described in our Section 4. 
 - TNN-SV-private: Private version of Threshold KNN-Shapley, described in our Section 5. 
 
+The meaning of all other input arguments in the above command line should be clear from its naming, but please feel free to reach out if anything is not clear! 
 
-For private setting, we need to also specify the desired privacy parameter `eps`, `delta`, and subsampling rate `q`; moreover, we can run the experiment for multiple times to obtain the variance of the results. 
+For private setting, we need to additionally specify the desired privacy parameter `--eps`, `--delta`, and subsampling rate `--q`; moreover, we can run the experiment for multiple times (with `--n_repeat`) to obtain the variance of the results. 
 The following command line gives you the result for DP-TKNN-Shapley:
 ```
 python main.py --task mislabel_detect --dataset 2dplanes --value_type TNN-SV-private --n_data 2000 --n_val 200 --flip_ratio 0.1 --tau -0.5 --eps 0.1 --delta 1e-4 --n_repeat 5 --q 0.01

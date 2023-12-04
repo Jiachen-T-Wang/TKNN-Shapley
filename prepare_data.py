@@ -23,6 +23,36 @@ from helper import *
 
 OpenML_dataset = ['fraud', 'apsfail', 'click', 'phoneme', 'wind', 'pol', 'creditcard', 'cpu', 'vehicle', '2dplanes']
 
+
+def make_balance_sample_multiclass(data, target, n_data):
+
+    n_class = len(np.unique(target))
+
+    n_data_per_class = int(n_data / n_class)
+
+    selected_ind = np.array([])
+
+    for i in range(n_class):
+
+        index_class = np.where(target == i)[0]
+
+        ind = np.random.choice(index_class, size=n_data_per_class, replace=False)
+
+        selected_ind = np.concatenate([selected_ind, ind])
+
+    selected_ind = selected_ind.astype(int)
+
+    data, target = data[selected_ind], target[selected_ind]
+
+    assert n_data == len(target)
+
+    idxs=np.random.permutation(n_data)
+    data, target=data[idxs], target[idxs]
+
+    return data, target
+
+
+
 # If noisy_data=False => Flip Label
 # If noisy_data=True => Add Gaussian Noise
 def get_processed_data(dataset, n_data, n_val, flip_ratio, minor_ratio=0.5, noisy_data=False):
@@ -135,105 +165,6 @@ def get_processed_data(dataset, n_data, n_val, flip_ratio, minor_ratio=0.5, nois
             y_train[:n_flip] = np.array( [ np.random.choice( np.setdiff1d(np.arange(n_class), [y_train[i]]) ) for i in range(n_flip) ] )
 
     return x_train, y_train, x_val, y_val
-
-
-
-def get_processed_data_clip(dataset, n_data, n_val, flip_ratio, minor_ratio=0.5):
-    
-    print('-------')
-    print('Load Dataset {}'.format(dataset))
-
-    if dataset in OpenML_dataset:
-
-        X, y, _, _ = get_data(dataset)
-        x_train, y_train = X[:n_data], y[:n_data]
-        x_val, y_val = X[n_data:n_data+n_val], y[n_data:n_data+n_val]
-
-        X_mean, X_std = np.mean(x_train, 0), np.std(x_train, 0)
-        normalizer_fn = lambda x: (x - X_mean) / np.clip(X_std, 1e-12, None)
-        x_train, x_val = normalizer_fn(x_train), normalizer_fn(x_val)
-
-        x_train = x_train / np.linalg.norm(x_train, ord=2, axis=1)[:, None] * 3
-        x_val = x_val / np.linalg.norm(x_val, ord=2, axis=1)[:, None] * 3
-
-    else:
-        x_train, y_train, x_test, y_test = get_data(dataset)
-        x_val, y_val = x_test, y_test
-
-        if dataset != 'covertype':
-            x_train, y_train = make_balance_sample_multiclass(x_train, y_train, n_data)
-            x_val, y_val = make_balance_sample_multiclass(x_test, y_test, n_data)
-
-        # x_train = x_train / np.linalg.norm(x_train, ord=2, axis=1)[:, None, None, None] * 3
-        # x_val = x_val / np.linalg.norm(x_val, ord=2, axis=1)[:, None, None, None] * 3
-
-    np.random.seed(999)
-    n_flip = int(n_data*flip_ratio)
-
-    assert len(y_train.shape)==1
-    n_class = len(np.unique(y_train))
-    print('# of classes = {}'.format(n_class))
-    print('-------')
-
-    if n_class == 2:
-        y_train[:n_flip] = 1 - y_train[:n_flip]
-    else:
-        y_train[:n_flip] = np.array( [ np.random.choice( np.setdiff1d(np.arange(n_class), [y_train[i]]) ) for i in range(n_flip) ] )
-
-    return x_train, y_train, x_val, y_val
-
-
-
-
-def get_processed_data_noisy(dataset, n_data, n_val, flip_ratio, minor_ratio=0.5):
-    
-    np.random.seed(999)
-    
-    print('-------')
-    print('Load Dataset {}'.format(dataset))
-
-    if dataset in OpenML_dataset:
-        X, y, _, _ = get_data(dataset)
-        x_val, y_val = X[:n_val], y[:n_val]
-
-        x_train, y_train = X[n_val:], y[n_val:]
-        X_mean, X_std = np.mean(x_train, 0), np.std(x_train, 0)
-        normalizer_fn = lambda x: (x - X_mean) / np.clip(X_std, 1e-12, None)
-        x_train, x_val = normalizer_fn(x_train), normalizer_fn(x_val)
-
-        p = np.mean(y_train)
-        if p < 0.5:
-            minor_class=1
-        else:
-            minor_class=0
-        
-        index_minor_class = np.where(y_train == minor_class)[0]
-        index_major_class = np.where(y_train == 1-minor_class)[0]
-        n_minor = int(n_data*minor_ratio)
-        n_major = int(n_data - n_minor)
-        idx_minor = np.random.choice(index_minor_class, size=n_minor, replace=False)
-        idx_major = np.random.choice(index_major_class, size=n_major, replace=False)
-        idx = np.concatenate([idx_minor, idx_major])
-        x_train, y_train = x_train[idx], y_train[idx]
-
-    else:
-        x_train, y_train, x_test, y_test = get_data(dataset)
-        x_val, y_val = x_test, y_test
-
-        if dataset != 'covertype':
-            x_train, y_train = make_balance_sample_multiclass(x_train, y_train, n_data)
-            x_val, y_val = make_balance_sample_multiclass(x_test, y_test, n_data)
-
-    n_flip = int(n_data*flip_ratio)
-
-    print(x_train.shape)
-    
-    x_train[:n_flip] += np.random.normal(loc=10.0, scale=0.0, size=(n_flip, x_train.shape[1]))
-
-    return x_train, y_train, x_val, y_val
-
-
-
 
 
 def get_data(dataset):
